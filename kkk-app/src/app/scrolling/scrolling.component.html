@@ -1,0 +1,42 @@
+<div class="app-shell">
+  <header class="header">
+    <h1>My Blog</h1>
+    <input
+      type="search"
+      placeholder="Filter posts..."
+      [value]="filter()"
+      (input)="onFilterChange($any($event.target).value)"
+      class="search"
+      aria-label="Filter posts"
+    />
+  </header>
+
+  <section class="status-row" *ngIf="error()">
+    <span class="error">{{ error() }}</span>
+  </section>
+
+  <section class="timeline">
+    <article class="timeline-item" *ngFor="let post of filteredPosts(); let i = index">
+      <div class="timeline-marker">
+        {{ i + 1 }}
+      </div>
+      <div class="timeline-content">
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.body }}</p>
+      </div>
+    </article>
+  </section>
+
+  <div class="loader-wrapper" *ngIf="isLoading()">
+    <div class="loader"></div>
+    <span>Loading more posts...</span>
+  </div>
+
+  <div class="no-more" *ngIf="!hasMore() && !isLoading()">
+    <span>No more posts to load.</span>
+  </div>
+
+  <button class="load-more" (click)="loadNextPage()" *ngIf="hasMore() && !isLoading()">
+    Load more posts
+  </button>
+</div>
