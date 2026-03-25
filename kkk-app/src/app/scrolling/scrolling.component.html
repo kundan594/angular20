@@ -25,6 +25,9 @@
         <p>{{ post.body }}</p>
       </div>
     </article>
+
+    <!-- Sentinel element for Intersection Observer -->
+    <div #sentinel class="sentinel"></div>
   </section>
 
   <div class="loader-wrapper" *ngIf="isLoading()">

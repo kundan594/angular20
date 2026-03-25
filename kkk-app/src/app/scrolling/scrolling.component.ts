@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, signal, WritableSignal, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ScrollingService, Post } from './scrolling.service';
 import { SCROLLING_CONFIG } from './scrolling.constants';
 
@@ -10,8 +10,9 @@ import { SCROLLING_CONFIG } from './scrolling.constants';
   templateUrl: './scrolling.component.html',
   styleUrl: './scrolling.component.css'
 })
-export class ScrollingComponent {
-  private readonly scrollingService = new ScrollingService();
+export class ScrollingComponent implements OnInit, OnDestroy {
+  private readonly scrollingService = inject(ScrollingService);
+  @ViewChild('sentinel', { static: false }) sentinel!: ElementRef;
 
   protected readonly posts: WritableSignal<Post[]> = signal([]);
   protected readonly page = signal(1);
@@ -27,26 +28,63 @@ export class ScrollingComponent {
     return this.scrollingService.filterPosts(this.posts(), this.filter());
   });
 
-  private readonly onWindowScroll = () => {
-    if (this.isLoading() || !this.hasMore()) {
-      return;
-    }
+  private observer: IntersectionObserver | null = null;
+  private loadTimeout: number | null = null;
+  private isLoadingScheduled = false;
 
-    const scrollPosition = window.scrollY + window.innerHeight;
-    const triggerPoint = document.documentElement.scrollHeight - SCROLLING_CONFIG.SCROLL_THRESHOLD;
-
-    if (scrollPosition >= triggerPoint) {
-      this.loadNextPage();
-    }
-  };
-
-  constructor() {
+  ngOnInit(): void {
     this.loadNextPage();
-    window.addEventListener('scroll', this.onWindowScroll, { passive: true });
+    this.setupIntersectionObserver();
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('scroll', this.onWindowScroll);
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
+    if (this.loadTimeout !== null) {
+      clearTimeout(this.loadTimeout);
+    }
+  }
+
+  private setupIntersectionObserver(): void {
+    const options: IntersectionObserverInit = {
+      root: null,
+      rootMargin: `${SCROLLING_CONFIG.OBSERVER_THRESHOLD}px`,
+      threshold: 0.1
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !this.isLoadingScheduled && this.hasMore()) {
+          this.scheduleLoadNextPage();
+        }
+      });
+    }, options);
+
+    // Observe the sentinel element
+    setTimeout(() => {
+      if (this.sentinel) {
+        this.observer!.observe(this.sentinel.nativeElement);
+      }
+    });
+  }
+
+  private scheduleLoadNextPage(): void {
+    if (this.isLoadingScheduled) {
+      return;
+    }
+
+    this.isLoadingScheduled = true;
+
+    if (this.loadTimeout !== null) {
+      clearTimeout(this.loadTimeout);
+    }
+
+    this.loadTimeout = window.setTimeout(() => {
+      this.isLoadingScheduled = false;
+      this.loadNextPage();
+    }, SCROLLING_CONFIG.DEBOUNCE_DELAY);
   }
 
   protected onFilterChange(value: string) {
@@ -67,9 +105,6 @@ export class ScrollingComponent {
       const newPosts = await this.scrollingService.fetchPosts(currentPage);
       this.posts.set([...this.posts(), ...newPosts]);
       this.page.set(currentPage + 1);
-
-      // Add delay for testing loader visibility
-      await new Promise((resolve) => setTimeout(resolve, SCROLLING_CONFIG.LOADER_DELAY));
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
       this.error.set(`Failed to load posts: ${message}`);
