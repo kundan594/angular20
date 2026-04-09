@@ -1,1 +1,13 @@
-﻿<router-outlet></router-outlet>
+﻿<nav class="navbar">
+  <div class="nav-container">
+    <h1 class="nav-title">Angular 20 Demo App</h1>
+    <ul class="nav-links">
+      <li><a routerLink="/scrolling" routerLinkActive="active">Scrolling Demo</a></li>
+      <li><a routerLink="/rxjs-demo" routerLinkActive="active">RxJS Operators Demo</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <router-outlet></router-outlet>
+</main>

@@ -1,0 +1,146 @@
+.rxjs-demo {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.demo-section {
+  margin-bottom: 40px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+.explanation {
+  background-color: #ecf0f1;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.explanation h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.explanation ul {
+  margin-bottom: 0;
+}
+
+.operator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.operator-category {
+  background-color: white;
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.operator-category h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+}
+
+.operator-category ul {
+  margin: 10px 0 0 0;
+  padding-left: 20px;
+}
+
+.operator-category li {
+  margin-bottom: 5px;
+}
+
+.operator-category code {
+  background-color: #f1f1f1;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.use-cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.use-case {
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.use-case h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.use-case p {
+  color: #7f8c8d;
+  margin-bottom: 15px;
+}
+
+.use-case pre {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  padding: 15px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0;
+}
+
+.use-case code {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .operator-grid,
+  .use-cases {
+    grid-template-columns: 1fr;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group button {
+    width: 100%;
+  }
+}

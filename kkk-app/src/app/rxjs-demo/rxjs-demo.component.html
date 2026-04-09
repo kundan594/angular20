@@ -1,0 +1,165 @@
+<div class="rxjs-demo">
+  <h1>RxJS Operators Demo</h1>
+  <p>This component demonstrates various RxJS operators using the JSONPlaceholder API.</p>
+  <p>Open the browser console to see the operator demonstrations.</p>
+
+  <div class="demo-section">
+    <h2>Interactive Demos</h2>
+
+    <div class="button-group">
+      <button (click)="onClick('click')">Trigger Click Subject</button>
+      <button (click)="onSearch('angular')">Simulate Search</button>
+    </div>
+
+    <div class="explanation">
+      <h3>Click the buttons above to see:</h3>
+      <ul>
+        <li><strong>Trigger Click Subject:</strong> Demonstrates debounceTime, switchMap, and exhaustMap operators</li>
+        <li><strong>Simulate Search:</strong> Shows how search functionality works with RxJS operators</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Operator Categories Demonstrated</h2>
+
+    <div class="operator-grid">
+      <div class="operator-category">
+        <h3>Static Observables</h3>
+        <ul>
+          <li><code>of()</code> - Emits values synchronously</li>
+          <li><code>from()</code> - Converts array/promise to observable</li>
+        </ul>
+      </div>
+
+      <div class="operator-category">
+        <h3>Creation Operators</h3>
+        <ul>
+          <li><code>interval()</code> - Sequential numbers at intervals</li>
+          <li><code>timer()</code> - Delayed emissions</li>
+        </ul>
+      </div>
+
+      <div class="operator-category">
+        <h3>Transformation</h3>
+        <ul>
+          <li><code>map()</code> - Transform each value</li>
+          <li><code>pluck()</code> - Extract object property</li>
+          <li><code>scan()</code> - Accumulate with intermediate results</li>
+          <li><code>reduce()</code> - Accumulate to single result</li>
+        </ul>
+      </div>
+
+      <div class="operator-category">
+        <h3>Filtering</h3>
+        <ul>
+          <li><code>filter()</code> - Values passing predicate</li>
+          <li><code>take()</code> - First n values</li>
+          <li><code>takeUntil()</code> - Until notifier emits</li>
+          <li><code>takeWhile()</code> - While condition true</li>
+          <li><code>skip()</code> - Skip first n values</li>
+          <li><code>first()</code> - First value</li>
+          <li><code>last()</code> - Last value</li>
+          <li><code>distinctUntilChanged()</code> - When value changes</li>
+          <li><code>debounceTime()</code> - After pause in emissions</li>
+          <li><code>throttleTime()</code> - Emit then ignore for duration</li>
+        </ul>
+      </div>
+
+      <div class="operator-category">
+        <h3>Combination</h3>
+        <ul>
+          <li><code>combineLatest()</code> - Latest values from multiple observables</li>
+          <li><code>forkJoin()</code> - Last values when all complete</li>
+          <li><code>concat()</code> - Sequential concatenation</li>
+          <li><code>merge()</code> - Concurrent merging</li>
+          <li><code>zip()</code> - Corresponding values</li>
+          <li><code>race()</code> - First to emit</li>
+        </ul>
+      </div>
+
+      <div class="operator-category">
+        <h3>Flattening</h3>
+        <ul>
+          <li><code>mergeMap()</code> - Map and merge</li>
+          <li><code>concatMap()</code> - Map and concatenate</li>
+          <li><code>switchMap()</code> - Map and switch (cancel previous)</li>
+          <li><code>exhaustMap()</code> - Map and exhaust (ignore while active)</li>
+        </ul>
+      </div>
+
+      <div class="operator-category">
+        <h3>Error Handling</h3>
+        <ul>
+          <li><code>catchError()</code> - Catch and handle errors</li>
+          <li><code>retry()</code> - Retry on failure</li>
+          <li><code>retryWhen()</code> - Custom retry logic</li>
+        </ul>
+      </div>
+
+      <div class="operator-category">
+        <h3>Subjects</h3>
+        <ul>
+          <li><code>Subject</code> - Multicast, no initial value</li>
+          <li><code>BehaviorSubject</code> - Has initial value</li>
+          <li><code>ReplaySubject</code> - Replays last n values</li>
+          <li><code>AsyncSubject</code> - Last value when complete</li>
+        </ul>
+      </div>
+
+      <div class="operator-category">
+        <h3>Multicasting</h3>
+        <ul>
+          <li><code>share()</code> - Share single subscription</li>
+          <li><code>shareReplay()</code> - Share and replay values</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Practical Use Cases</h2>
+    <div class="use-cases">
+      <div class="use-case">
+        <h3>Search with Debouncing</h3>
+        <p>Use <code>debounceTime</code> to wait for user to stop typing before making API calls.</p>
+        <pre><code>// Search input stream
+searchInput$.pipe(
+  debounceTime(300),
+  distinctUntilChanged(),
+  switchMap(term => searchAPI(term))
+).subscribe(results => displayResults(results));</code></pre>
+      </div>
+
+      <div class="use-case">
+        <h3>Auto-save with Throttling</h3>
+        <p>Use <code>throttleTime</code> to limit save frequency while user is actively editing.</p>
+        <pre><code>// User input stream
+userInput$.pipe(
+  throttleTime(2000),
+  switchMap(data => saveToServer(data))
+).subscribe(() => showSaveIndicator());</code></pre>
+      </div>
+
+      <div class="use-case">
+        <h3>Load Related Data</h3>
+        <p>Use <code>switchMap</code> to cancel previous requests when new data is selected.</p>
+        <pre><code>// User selection stream
+selectedUser$.pipe(
+  switchMap(userId => loadUserDetails(userId))
+).subscribe(details => displayUserDetails(details));</code></pre>
+      </div>
+
+      <div class="use-case">
+        <h3>Multiple API Calls</h3>
+        <p>Use <code>forkJoin</code> to wait for multiple independent API calls to complete.</p>
+        <pre><code>// Load dashboard data
+forkJoin([
+  loadUsers(),
+  loadPosts(),
+  loadComments()
+]).subscribe(([users, posts, comments]) => renderDashboard(users, posts, comments));</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
