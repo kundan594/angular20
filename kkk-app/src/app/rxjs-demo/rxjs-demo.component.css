@@ -26,6 +26,33 @@ h1 {
   flex-wrap: wrap;
 }
 
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.input-group input {
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccd6dd;
+  max-width: 360px;
+}
+
+.demo-output {
+  background-color: #ffffff;
+  border: 1px solid #dfe6eb;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
 button {
   padding: 10px 20px;
   background-color: #3498db;

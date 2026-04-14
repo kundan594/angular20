@@ -21,6 +21,131 @@
   </div>
 
   <div class="demo-section">
+    <h2>combineLatest Live UI Example</h2>
+
+    <div class="explanation">
+      <p>This example uses <code>combineLatest</code> to combine the latest selected user and the current search text. It emits every time either value changes.</p>
+    </div>
+
+    <div class="button-group">
+      <button (click)="selectUser(1)">Select User 1</button>
+      <button (click)="selectUser(2)">Select User 2</button>
+      <button (click)="selectUser(3)">Select User 3</button>
+    </div>
+
+    <div class="input-group">
+      <label>
+        Search text:
+        <input type="text" placeholder="Type search text..." (input)="updateSearch($event.target.value)" />
+      </label>
+    </div>
+
+    <div class="demo-output" *ngIf="combineLatestDemo$ | async as latest">
+      <p><strong>combineLatest output:</strong></p>
+      <p>User ID: {{ latest.userId }}</p>
+      <p>Search: {{ latest.search || '(empty)' }}</p>
+      <p><em>This section updates instantly when either button or input changes.</em></p>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Advanced Reactive Search</h2>
+    <div class="explanation">
+      <p>Practice a more complex live-search flow that combines user selection with typed search text.</p>
+      <p>This example demonstrates:</p>
+      <ul>
+        <li><code>combineLatest()</code> - combine current user and search input</li>
+        <li><code>debounceTime()</code> - wait until the user pauses typing</li>
+        <li><code>distinctUntilChanged()</code> - ignore repeated search terms</li>
+        <li><code>switchMap()</code> - cancel an in-flight request when the search changes</li>
+        <li><code>shareReplay()</code> - share the latest filtered result across subscribers</li>
+      </ul>
+    </div>
+
+    <div class="input-group">
+      <label>
+        Search posts by title:
+        <input
+          type="text"
+          placeholder="Type to filter titles..."
+          [value]="searchQuery"
+          (input)="updateSearch($event.target.value)"
+        />
+      </label>
+    </div>
+
+    <div class="button-group">
+      <button (click)="selectUser(1)">User 1</button>
+      <button (click)="selectUser(2)">User 2</button>
+      <button (click)="selectUser(3)">User 3</button>
+      <button (click)="selectUser(4)">User 4</button>
+    </div>
+
+    <div class="demo-output" *ngIf="filteredPosts$ | async as posts">
+      <p>
+        Showing <strong>{{ posts.length }}</strong> post(s) for user <strong>{{ selectedUserId }}</strong>
+        matching <strong>"{{ searchQuery || 'any' }}"</strong>
+      </p>
+      <ul>
+        <li *ngFor="let post of posts">
+          <strong>{{ post.id }}</strong>: {{ post.title }}
+        </li>
+      </ul>
+      <p *ngIf="!posts.length"><em>No posts matched the current filter.</em></p>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h2>Real Search + Detail Scenario</h2>
+    <div class="explanation">
+      <p>This scenario shows a real-world typeahead search with cancellation and detail loading.</p>
+      <p>It demonstrates:</p>
+      <ul>
+        <li><code>debounceTime()</code> - wait for the user to stop typing</li>
+        <li><code>distinctUntilChanged()</code> - ignore duplicate search terms</li>
+        <li><code>switchMap()</code> - cancel stale requests when the query changes</li>
+        <li><code>shareReplay()</code> - share the latest result across subscribers</li>
+        <li><code>concatMap()</code> - process a save queue sequentially</li>
+      </ul>
+    </div>
+
+    <div class="input-group">
+      <label>
+        Search all posts:
+        <input
+          type="text"
+          placeholder="Search titles..."
+          [value]="postSearchQuery"
+          (input)="updatePostSearch($event.target.value)"
+        />
+      </label>
+    </div>
+
+    <div class="demo-output" *ngIf="postSearchResults$ | async as searchResults">
+      <p>
+        Found <strong>{{ searchResults.length }}</strong> posts for query
+        <strong>"{{ postSearchQuery || 'any' }}"</strong>.
+      </p>
+      <ul class="search-results">
+        <li *ngFor="let post of searchResults" (click)="selectPost(post.id)" [class.selected]="post.id === selectedPostId">
+          <strong>{{ post.id }}</strong>: {{ post.title }}
+        </li>
+      </ul>
+      <p *ngIf="!searchResults.length"><em>No posts matched this search query.</em></p>
+    </div>
+
+    <div class="demo-output" *ngIf="selectedPostComments$ | async as comments">
+      <p *ngIf="selectedPostId !== null"><strong>Comments for post {{ selectedPostId }}:</strong></p>
+      <ul>
+        <li *ngFor="let comment of comments">
+          <strong>{{ comment.name }}</strong> — {{ comment.body }}
+        </li>
+      </ul>
+      <p *ngIf="selectedPostId !== null && !comments.length"><em>No comments found for this post.</em></p>
+    </div>
+  </div>
+
+  <div class="demo-section">
     <h2>Operator Categories Demonstrated</h2>
 
     <div class="operator-grid">
