@@ -75,6 +75,7 @@ export class RxjsService {
   // Real-world search + detail scenario
   public postSearchQuery$ = new BehaviorSubject<string>('');
   public selectedPostId$ = new BehaviorSubject<number | null>(null);
+  private postsCache$?: Observable<Post[]>;
 
   /**
    * Public combineLatest demo observable.
@@ -90,7 +91,7 @@ export class RxjsService {
    * This is a realistic pattern for live search and filter UIs.
    */
   public filteredPosts$ = combineLatest([
-    this.selectedUser$,
+    this.selectedUser$.pipe(distinctUntilChanged()),
     this.searchTerm$.pipe(debounceTime(300), distinctUntilChanged())
   ]).pipe(
     switchMap(([userId, search]) =>
@@ -187,7 +188,13 @@ export class RxjsService {
    * @returns Observable of Post array
    */
   getPosts(limit: number = 10): Observable<Post[]> {
-    return this.http.get<Post[]>(`${this.apiUrl}/posts`).pipe(
+    if (!this.postsCache$) {
+      this.postsCache$ = this.http.get<Post[]>(`${this.apiUrl}/posts`).pipe(
+        shareReplay({ bufferSize: 1, refCount: false })
+      );
+    }
+
+    return this.postsCache$.pipe(
       map(posts => posts.slice(0, limit)),
       catchError(error => {
         console.error('Error fetching posts:', error);
